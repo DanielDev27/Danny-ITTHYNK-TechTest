@@ -22277,7 +22277,7 @@ MonoBehaviour:
   timerText: {fileID: 404342668}
   gameEndGC: {fileID: 603461549}
   timer: 0
-  maxTime: 10
+  maxTime: 60
   gameEnd: 0
 --- !u!1001 &2008233600
 PrefabInstance:

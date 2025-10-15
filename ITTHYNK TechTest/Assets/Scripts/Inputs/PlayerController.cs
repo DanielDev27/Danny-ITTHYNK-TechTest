@@ -59,6 +59,9 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] float dashTimer;
     [SerializeField] float dashMax;
 
+    /// <summary>
+    /// Awake functions that assign components on the script's game object, as well as assign the player inputs
+    /// </summary>
     void Awake () {
         Instance = this;
         playerInput = this?.GetComponent<PlayerInput> ();
@@ -77,6 +80,9 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Player input event listners assignment and removal
+    /// </summary>
     public void OnEnable () {
         InputHandler.Enable ();
         InputHandler.OnMovePerformed.AddListener (InputMove);
@@ -96,7 +102,9 @@ public class PlayerController : MonoBehaviour {
         InputHandler.OnLookPerformed.RemoveListener (InputLook);
     }
 
-
+    /// <summary>
+    /// Fixed update used for physics updates and timer
+    /// </summary>
     void FixedUpdate () {
         if (moveInput != Vector2.zero) {
             isMoving = true;
@@ -114,10 +122,17 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Move Input for event
+    /// </summary>
+    /// <param name="arg0"></param>
     void InputMove (Vector2 arg0) {
         moveInput = arg0;
     }
 
+    /// <summary>
+    /// Movement function
+    /// </summary>
     void OnPlayerMove () {
         //Debug.Log ($"moveInput {moveInput}");
         moveDirection = moveInput.x * playerTransform.right + moveInput.y * playerTransform.forward;
@@ -132,6 +147,9 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Dash input for event
+    /// </summary>
     void InputDash () {
         if (!isDashing) {
             isDashing = true;
@@ -139,10 +157,17 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Look input for event
+    /// </summary>
+    /// <param name="arg0"></param>
     void InputLook (Vector2 arg0) {
         lookInput = arg0;
     }
 
+    /// <summary>
+    /// Player look function
+    /// </summary>
     void OnPlayerLook () {
         //Debug.Log ($"lookInput {lookInput}");
         playerTransform.localRotation *= Quaternion.Euler (0, lookInput.x, 0);

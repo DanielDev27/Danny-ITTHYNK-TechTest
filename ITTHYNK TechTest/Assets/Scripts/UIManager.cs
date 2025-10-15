@@ -19,6 +19,9 @@ public class UIManager : MonoBehaviour {
 
     [SerializeField] bool gameEnd = false;
 
+    /// <summary>
+    /// Awake function for assigning UI starting values
+    /// </summary>
     void Awake () {
         gameHudCG.alpha = 1;
         gameHudCG.blocksRaycasts = true;
@@ -33,6 +36,9 @@ public class UIManager : MonoBehaviour {
         gameEnd = false;
     }
 
+    /// <summary>
+    /// Fixed update for timers
+    /// </summary>
     void FixedUpdate () {
         timerText.text = $"Time Left: {Math.Round (timer, 2).ToString ()}";
         if (timer > 0) {
