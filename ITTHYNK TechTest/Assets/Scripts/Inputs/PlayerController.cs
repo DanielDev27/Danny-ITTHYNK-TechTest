@@ -56,6 +56,8 @@ public class PlayerController : MonoBehaviour {
     public float mouseSensitivityHori;
     public float mouseSensitivityVert;
     public float controllerSensitivity;
+    [SerializeField] float dashTimer;
+    [SerializeField] float dashMax;
 
     void Awake () {
         Instance = this;
@@ -103,6 +105,13 @@ public class PlayerController : MonoBehaviour {
         OnPlayerMove ();
         cubeTransform.localPosition = Vector3.zero;
         OnPlayerLook ();
+        if (dashTimer > 0) {
+            dashTimer -= Time.fixedDeltaTime;
+        }
+
+        if (dashTimer <= 0 && isDashing) {
+            isDashing = false;
+        }
     }
 
     void InputMove (Vector2 arg0) {
@@ -111,31 +120,31 @@ public class PlayerController : MonoBehaviour {
 
     void OnPlayerMove () {
         //Debug.Log ($"moveInput {moveInput}");
-        if (Camera.main != null) {
-            moveDirection = moveInput.x * Camera.main.transform.right + moveInput.y * Camera.main.transform.forward;
-        }
+        moveDirection = moveInput.x * playerTransform.right + moveInput.y * playerTransform.forward;
 
+        cubeRotate = (playerTransform.right * moveInput.y + playerTransform.forward * -moveInput.x);
         if (!isDashing) {
             playerRigidbody.velocity = isMoving ? new Vector3 (moveDirection.x * moveSpeed, playerRigidbody.velocity.y, moveDirection.z * moveSpeed) : Vector3.zero;
-            cubeRotate = playerTransform.right * moveInput.y * rotationSpeed * moveSpeed + playerTransform.forward * -moveInput.x * rotationSpeed * moveSpeed;
-            cubeRigidbody.transform.Rotate (cubeRotate, Space.World);
+            cubeRigidbody.transform.Rotate (cubeRotate * rotationSpeed * moveSpeed, Space.World);
         } else {
             playerRigidbody.velocity = isMoving ? new Vector3 (moveDirection.x * dashSpeed, playerRigidbody.velocity.y, moveDirection.z * dashSpeed) : Vector3.zero;
-            cubeRotate = playerTransform.right * moveInput.y * rotationSpeed * dashSpeed + playerTransform.forward * -moveInput.x * rotationSpeed * moveSpeed;
-            cubeRigidbody.transform.Rotate (cubeRotate, Space.World);
+            cubeRigidbody.transform.Rotate (cubeRotate * rotationSpeed * dashSpeed, Space.World);
         }
     }
 
     void InputDash () {
-        isDashing = true;
+        if (!isDashing) {
+            isDashing = true;
+            dashTimer = dashMax;
+        }
     }
 
     void InputLook (Vector2 arg0) {
-        lookInput = arg0.normalized;
+        lookInput = arg0;
     }
 
     void OnPlayerLook () {
         //Debug.Log ($"lookInput {lookInput}");
-        playerTransform.rotation = Quaternion.Euler (0, virtualCamera.transform.eulerAngles.y, 0);
+        playerTransform.localRotation *= Quaternion.Euler (0, lookInput.x, 0);
     }
 }
