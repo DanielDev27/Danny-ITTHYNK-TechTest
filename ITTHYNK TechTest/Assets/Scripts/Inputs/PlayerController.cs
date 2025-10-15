@@ -121,14 +121,14 @@ public class PlayerController : MonoBehaviour {
     void OnPlayerMove () {
         //Debug.Log ($"moveInput {moveInput}");
         moveDirection = moveInput.x * playerTransform.right + moveInput.y * playerTransform.forward;
-
         cubeRotate = (playerTransform.right * moveInput.y + playerTransform.forward * -moveInput.x);
+
         if (!isDashing) {
             playerRigidbody.velocity = isMoving ? new Vector3 (moveDirection.x * moveSpeed, playerRigidbody.velocity.y, moveDirection.z * moveSpeed) : Vector3.zero;
-            cubeRigidbody.transform.Rotate (cubeRotate * rotationSpeed * moveSpeed, Space.World);
+            cubeRigidbody.angularVelocity = cubeRotate * rotationSpeed * moveSpeed;
         } else {
             playerRigidbody.velocity = isMoving ? new Vector3 (moveDirection.x * dashSpeed, playerRigidbody.velocity.y, moveDirection.z * dashSpeed) : Vector3.zero;
-            cubeRigidbody.transform.Rotate (cubeRotate * rotationSpeed * dashSpeed, Space.World);
+            cubeRigidbody.angularVelocity = cubeRotate * rotationSpeed * dashSpeed;
         }
     }
 
