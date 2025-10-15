@@ -16,6 +16,8 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] bool isMoving;
     [SerializeField] bool isDashing;
 
+    Vector3 cubeRotate;
+
     [Header ("References")]
     //
     //Player References
@@ -38,6 +40,7 @@ public class PlayerController : MonoBehaviour {
     //
     [SerializeField] GameObject cubeGameObject;
     [SerializeField] Transform cubeTransform;
+    [SerializeField] Rigidbody cubeRigidbody;
     Vector3 cubeRotation;
 
     public PlayerInput playerInput;
@@ -95,11 +98,9 @@ public class PlayerController : MonoBehaviour {
     void FixedUpdate () {
         if (moveInput != Vector2.zero) {
             isMoving = true;
-            OnPlayerMove ();
-        } else {
-            isMoving = false;
         }
 
+        OnPlayerMove ();
         cubeTransform.localPosition = Vector3.zero;
         OnPlayerLook ();
     }
@@ -116,12 +117,12 @@ public class PlayerController : MonoBehaviour {
 
         if (!isDashing) {
             playerRigidbody.velocity = isMoving ? new Vector3 (moveDirection.x * moveSpeed, playerRigidbody.velocity.y, moveDirection.z * moveSpeed) : Vector3.zero;
-            cubeTransform.Rotate (playerTransform.forward * -moveDirection.x * rotationSpeed * moveSpeed, Space.World);
-            cubeTransform.Rotate (playerTransform.right * moveDirection.z * rotationSpeed * moveSpeed, Space.World);
+            cubeRotate = playerTransform.right * moveInput.y * rotationSpeed * moveSpeed + playerTransform.forward * -moveInput.x * rotationSpeed * moveSpeed;
+            cubeRigidbody.transform.Rotate (cubeRotate, Space.World);
         } else {
             playerRigidbody.velocity = isMoving ? new Vector3 (moveDirection.x * dashSpeed, playerRigidbody.velocity.y, moveDirection.z * dashSpeed) : Vector3.zero;
-            cubeTransform.Rotate (playerTransform.forward * -moveDirection.x * rotationSpeed * dashSpeed, Space.World);
-            cubeTransform.Rotate (playerTransform.right * moveDirection.z * rotationSpeed * dashSpeed, Space.World);
+            cubeRotate = playerTransform.right * moveInput.y * rotationSpeed * dashSpeed + playerTransform.forward * -moveInput.x * rotationSpeed * moveSpeed;
+            cubeRigidbody.transform.Rotate (cubeRotate, Space.World);
         }
     }
 
@@ -135,6 +136,6 @@ public class PlayerController : MonoBehaviour {
 
     void OnPlayerLook () {
         //Debug.Log ($"lookInput {lookInput}");
-        transform.rotation = Quaternion.Euler (0, virtualCamera.transform.eulerAngles.y, 0);
+        playerTransform.rotation = Quaternion.Euler (0, virtualCamera.transform.eulerAngles.y, 0);
     }
 }

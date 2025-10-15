@@ -942,6 +942,7 @@ MonoBehaviour:
   virtualCamera: {fileID: 0}
   cubeGameObject: {fileID: 955212332}
   cubeTransform: {fileID: 955212333}
+  cubeRigidbody: {fileID: 955212338}
   playerInput: {fileID: 0}
   moveSpeed: 2
   dashSpeed: 5
