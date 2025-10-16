@@ -3,12 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour {
     [Header ("UI Visuals")]
     [SerializeField] CanvasGroup gameHudCG;
 
     [SerializeField] TextMeshProUGUI timerText;
+
+    [SerializeField] List<Image> flagChecks = new List<Image> ();
 
     [SerializeField] CanvasGroup gameEndGC;
 
@@ -34,22 +37,45 @@ public class UIManager : MonoBehaviour {
         timerText.text = $"Time Left: {Math.Round (timer, 2).ToString ()}";
 
         gameEnd = false;
+        for (int i = 0; i < flagChecks.Count; i++) {
+            flagChecks[i].GetComponent<Image> ().color = Color.white;
+        }
     }
+
+    void OnEnable () {
+        GameManager.GameEndEvent.AddListener (GameEndResponse);
+        FlagTriggerManager.FlagTriggerEvent.AddListener (FlagTriggerResponse);
+    }
+
 
     /// <summary>
     /// Fixed update for timers
     /// </summary>
     void FixedUpdate () {
         timerText.text = $"Time Left: {Math.Round (timer, 2).ToString ()}";
-        if (timer > 0) {
+        if (timer > 0 && !gameEnd) {
             timer -= Time.fixedDeltaTime;
         }
 
         if (timer < 0 && !gameEnd) {
             gameEnd = true;
-            gameEndGC.alpha = 1;
-            gameEndGC.blocksRaycasts = true;
-            gameEndGC.interactable = true;
+            CanvasEnable ();
         }
+    }
+
+    void GameEndResponse () {
+        gameEnd = true;
+        CanvasEnable ();
+    }
+
+    void CanvasEnable () {
+        gameEndGC.alpha = 1;
+        gameEndGC.blocksRaycasts = true;
+        gameEndGC.interactable = true;
+    }
+
+
+    void FlagTriggerResponse (int arg0) {
+        flagChecks[arg0].GetComponent<Image> ().color = Color.green;
     }
 }
